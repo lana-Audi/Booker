@@ -8,62 +8,85 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
+use App\Services\WhatsAppService;
+use App\Services\OtpService;
+
 class UserController extends Controller
 {
-    public function register(Request $request)
+
+    protected $whatsapp;
+    protected $otpService;
+
+    public function __construct(WhatsAppService $whatsapp, OtpService $otpService)
     {
-        try {
-            $validatedData = $request->validate([
-                'phone_number' => 'required|unique:users,phone_number',
-                'first_name' => 'required|string',
-                'last_name' => 'required|string',
-                'date_of_birth' => 'required',
-                'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-                'password' => 'required|string|confirmed',
-            ]);
-
-            $profileImageName = null;
-            if ($request->hasFile('profile_image')) {
-                $image = $request->file('profile_image');
-
-                $profileImageName = 'user_' . time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
-
-                $image->storeAs('public/profile_images', $profileImageName);
-            }
-
-            $user = User::create([
-                'phone_number' => $validatedData['phone_number'],
-                'first_name' => $validatedData['first_name'],
-                'last_name' => $validatedData['last_name'],
-                'date_of_birth' => $validatedData['date_of_birth'],
-                'password' => Hash::make($validatedData['password']),
-                'profile_image' => $profileImageName,
-            ]);
-
-            $token = $user->createToken('auth_token')->plainTextToken;
-
-            return response()->json([
-                'success' => true,
-                'message' => 'User registered successfully',
-                'data' => [
-                    'user' => $user,
-                    'token' => $token,
-                ]
-            ], 201);
-        } catch (ValidationException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation error',
-                'errors' => $e->errors()
-            ], 422);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Registration failed',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+        $this->whatsapp = $whatsapp;
+        $this->otpService = $otpService;
     }
+
+    public function register(Request $request)
+{
+    try {
+        $validatedData = $request->validate([
+            'phone_number' => 'required|unique:users,phone_number',
+            'password' => 'required|string|confirmed',
+        ]);
+
+        $otp = $this->otpService->generateOtp($validatedData['phone_number']);
+
+        $this->whatsapp->sendMessage(
+            $validatedData['phone_number'],
+            "Your OTP code is: $otp"
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'OTP sent. Please verify.',
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Registration failed',
+            'error' => $e->getMessage(),
+        ], 500);
+    }
+}
+
+//"التحقق من الرقم "واجهة ال 6 ارقام 
+public function verifyOtp(Request $request)
+{
+    $request->validate([
+        'phone_number' => 'required',
+        'otp' => 'required',
+        'password' => 'required|confirmed'
+    ]);
+
+    $otpRecord = $this->otpService->verifyOtp($request->phone_number, $request->otp);
+
+    if (! $otpRecord) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Invalid or expired OTP'
+        ], 400);
+    }
+
+    $user = User::create([
+        'phone_number' => $request->phone_number,
+        'password' => Hash::make($request->password),
+    ]);
+
+    $otpRecord->delete();
+
+    $token = $user->createToken('auth_token')->plainTextToken;
+
+    return response()->json([
+        'success' => true,
+        'message' => 'User verified and registered successfully',
+        'token' => $token,
+        'user' => $user,
+    ]);
+}
+
 
 
     //تسجيل الدخول
@@ -84,6 +107,14 @@ class UserController extends Controller
 
             $user = User::where('phone_number', $request->phone_number)->FirstOrFail();
             $token = $user->createToken('auth_token')->plainTextToken;
+
+            if (! $user->is_approved) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Your account is pending approval from Admin.',
+                ], 403);
+            }
+            
 
             return response()->json([
                 'success' => true,

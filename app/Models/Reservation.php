@@ -10,8 +10,10 @@ class Reservation extends Model
     {
         return $this->belongsTo(Apartment::class);
     }
-    public function Profile()
+    
+    public function user()
     {
-        return $this ->belongsTo(Profile::class);
+        return $this ->belongsTo(User::class);
     }
+    
 }

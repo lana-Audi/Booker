@@ -25,11 +25,12 @@ class storeprofilerequest extends FormRequest
     {
      
         return [
-            'phone'=>'string|max:15',
-            'address'=>'string|max:100',
-            'date_of_birth'=>'date|nullable',
-            'bio'=>'string|nullable',
-            'image'=>'required|image|mimes:png,jpg,jpeg,gif|max:2048',
+            'phone_number'=>'string|max:15',
+            'personal_image'=>'required|image|mimes:png,jpg,jpeg,gif|max:2048',
+            'id_image'=>'required|image|mimes:png,jpg,jpeg,gif|max:2048',
+            'first_name' => 'required|string',
+            'last_name' => 'required|string',
+            'date_of_birth' => 'required',
 
         ];
 }

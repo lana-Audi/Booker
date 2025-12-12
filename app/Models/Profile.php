@@ -6,13 +6,23 @@ use Illuminate\Database\Eloquent\Model;
 
 class Profile extends Model
 {
+
+    
+        protected $fillable = [
+            'user_id',       
+            'phone_number',
+            'first_name',
+            'last_name',
+            'date_of_birth',
+            'personal_image',
+            'id_image'
+        ];
+    
     public function user()
     {
         return $this ->belongsTo(User::class);
     }
-    public function reservation()
-    {
-        return $this ->hasOne(Reservation::class);
-    } 
+
+  
 
 }

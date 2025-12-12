@@ -58,23 +58,13 @@ class User extends Authenticatable
         return $this->hasOne(Profile::class);
     }
 
-
-    public function getProfileImageUrlAttribute()
-    {
-        if ($this->profile_image && Storage::exists('public/profile_images/' . $this->profile_image)) {
-            return Storage::url('profile_images/' . $this->profile_image);
-        }
-
-        return asset('images/default-profile.png');
+    public function apartments(){
+        return $this->belongsToMany(Apartment::class,'user_apartment');
     }
 
-
-    //تابع لاحذف الصورة القديمة وقت حدثها 
-    public function deleteOldProfileImage()
+    public function reservation()
     {
-        if ($this->profile_image && Storage::exists('public/profile_images/' . $this->profile_image)) {
-            Storage::delete('public/profile_images/' . $this->profile_image);
-        }
-    }
-
+        return $this ->hasMany(Reservation::class);
+    } 
+    
 }

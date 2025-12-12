@@ -11,15 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('profils', function (Blueprint $table) {
+        Schema::create('otps', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users');
-            $table->string('phone');
-            $table->date('date_of_birth');
-            $table->text('bio')->nullable();
-            $table->string('image')->nullable();
+            $table->string('phone_number');
+            $table->string('otp');
+            $table->timestamp('expires_at');
             $table->timestamps();
         });
+        
     }
 
     /**
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('profils');
+        Schema::dropIfExists('otps');
     }
 };

@@ -11,11 +11,18 @@ class Apartment extends Model
         'location' ,
         'rent_price',
         'sale_price' ,
-        'apartment_area'
+        'apartment_space',
+        'rooms' ,
+        'floor',
+        'bathrooms' ,
+        'apartment_space'
     ];
 
     public function reservation()
     {
         return $this->hasMany(Reservation::class);
+    }
+    public function users(){
+        return $this->belongsToMany(User::class,'user_apartment');
     }
 }
