@@ -26,8 +26,8 @@ class storeprofilerequest extends FormRequest
      
         return [
             'phone_number'=>'string|max:15',
-            'personal_image'=>'required|image|mimes:png,jpg,jpeg,gif|max:2048',
-            'id_image'=>'required|image|mimes:png,jpg,jpeg,gif|max:2048',
+            'personal_image'=>'image|mimes:png,jpg,jpeg,gif|max:2048',
+            'id_image'=>'image|mimes:png,jpg,jpeg,gif|max:2048',
             'first_name' => 'required|string',
             'last_name' => 'required|string',
             'date_of_birth' => 'required',
