@@ -14,12 +14,11 @@ return new class extends Migration
         Schema::create('profiles', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users');
-            $table->string('phone_number');
             $table->string('first_name');
             $table->string('last_name');
             $table->date('date_of_birth');
-            $table->string('personal_image')->nullable();
-            $table->string('id_image')->nullable();
+            $table->string('personal_image');
+            $table->string('id_image');
             $table->timestamps();
         });
     }

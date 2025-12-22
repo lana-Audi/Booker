@@ -8,21 +8,21 @@ class Apartment extends Model
 {
 
     protected $fillable = [
-        'location' ,
+        'location',
         'rent_price',
-        'sale_price' ,
         'apartment_space',
-        'rooms' ,
+        'rooms',
         'floor',
-        'bathrooms' ,
-        'apartment_space'
+        'bathrooms',
+        'apartment_image',
     ];
 
     public function reservation()
     {
         return $this->hasMany(Reservation::class);
     }
-    public function users(){
-        return $this->belongsToMany(User::class,'user_apartment');
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'user_apartment');
     }
 }

@@ -19,7 +19,7 @@ class ForgotPasswordController extends Controller
         $this->otpService = $otpService;
     }
 
-    // 1) إرسال OTP لنسيان كلمة المرور
+  
     public function sendOtp(Request $request)
     {
         $request->validate([
@@ -64,7 +64,7 @@ class ForgotPasswordController extends Controller
         ]);
     }
 
-    // 3) إعادة ضبط كلمة المرور
+
     public function resetPassword(Request $request)
     {
         $request->validate([

@@ -42,11 +42,11 @@ class ProfileController extends Controller
             return response()->json(['message' => 'unauthorized'], 403);
         }
 
-        $profile->update($request->only('phone_number', 'date_of_birth', 'first_name', 'last_name'));
+        $profile->update($request->only('date_of_birth', 'first_name', 'last_name'));
 
-        // تحديث الصورة الشخصية   
+         
         if ($request->hasFile('personal_image')) {
-            // حذف الصورة القديمة  
+  
             if ($profile->personal_image) {
                 Storage::disk('public')->delete($profile->personal_image);
             }
