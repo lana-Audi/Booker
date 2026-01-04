@@ -8,7 +8,8 @@ class Apartment extends Model
 {
 
     protected $fillable = [
-        'location',
+        'city',
+        'Governorate',
         'rent_price',
         'apartment_space',
         'rooms',

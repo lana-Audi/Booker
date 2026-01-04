@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('reservations', function (Blueprint $table) {
+        Schema::create('ratings', function (Blueprint $table) {
             $table->id();
-            $table->softDeletes();
-            $table->date('start_date');
-            $table->date('end_date');
+            $table->text('comment');
+            $table->integer('rating');
             $table->foreignId('user_id')->constrained('users');
-            $table->foreignId('apartment_id')->constrained('apartments');
+            $table->foreignId('booking_id')->constrained('reservations')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -26,11 +25,7 @@ return new class extends Migration
      * Reverse the migrations.
      */
     public function down(): void
-
     {
-        Schema::table('reservations', function (Blueprint $table) {
-            $table->dropSoftDeletes();
-        });
-        Schema::dropIfExists('reservations');
+        Schema::dropIfExists('ratings');
     }
 };

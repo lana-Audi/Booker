@@ -18,6 +18,7 @@ class ProfileController extends Controller
 
         $validatedData = $request->validated(); //انا هون بالريكوست ماعندي اي دي 
         $validatedData['user_id'] = $user_id; //دخلت الاي دي عن طريق التوكن 
+        
         //الصور عم قله اذا كان في بالريكوست صورى هيك اسمها 
         if ($request->hasFile('personal_image')) {
             $validatedData['personal_image'] = $request->file('personal_image')->store('personal_images', 'public');
